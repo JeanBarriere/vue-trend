@@ -22,6 +22,10 @@ export default {
       type: Array,
       default: () => ['#000']
     },
+    fill: {
+      type: String,
+      default: undefined,
+    },
     max: {
       type: Number,
       default: -Infinity
@@ -57,14 +61,16 @@ export default {
 
           path.style.transition = 'none'
           path.style.strokeDasharray = length + ' ' + length
+          path.style.fillOpacity = 0
           path.style.strokeDashoffset = Math.abs(
             length - (this.lastLength || 0)
           )
           path.getBoundingClientRect()
-          path.style.transition = `stroke-dashoffset ${
+          path.style.transition = `all ${
             this.autoDrawDuration
           }ms ${this.autoDrawEasing}`
           path.style.strokeDashoffset = 0
+          path.style.fillOpacity = 1
           this.lastLength = length
         })
       }

@@ -6,13 +6,13 @@ import { checkCollinear, getDistance, moveTo } from './math'
  * @param  {object}             boundary
  * @return {object[]}
  */
-export function genPoints (arr, { minX, minY, maxX, maxY }, { max, min }) {
+export function genPoints (arr, { minX, minY, maxX, maxY }, { max, min }, fill) {
   arr = arr.map(item => (typeof item === 'number' ? item : item.value))
   const minValue = Math.min(...arr, min) - 0.001
   const gridX = (maxX - minX) / (arr.length - 1)
   const gridY = (maxY - minY) / (Math.max(...arr, max) + 0.001 - minValue)
 
-  return arr.map((value, index) => {
+  let ret = arr.map((value, index) => {
     return {
       x: index * gridX + minX,
       y:
@@ -22,6 +22,10 @@ export function genPoints (arr, { minX, minY, maxX, maxY }, { max, min }) {
         +(index === 0) * 0.00001
     }
   })
+  if (fill) {
+    ret.push({x: ret.length * gridX + minX, y: maxY - (0 - minValue) * gridY})
+  }
+  return ret
 }
 
 /**

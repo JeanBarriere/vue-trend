@@ -7,7 +7,9 @@
     <trend
       :data="data"
       :gradient="gradient"
+      fill="rgba(0,0,0,0.2)"
       auto-draw
+      :padding="0"
       smooth>
     </trend>
 
@@ -26,10 +28,10 @@ export default {
   components: { Trend, GithubBadge },
 
   created() {
-    this.data = [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0];
+    this.data = [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9];
     this.gradient = ['#6fa8dc', '#42b983', '#2c3e50'];
     this.code = hanabi(`<trend
-  :data="[0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]"
+  :data="[0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9]"
   :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
   auto-draw
   smooth>
