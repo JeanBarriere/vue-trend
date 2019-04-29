@@ -40,7 +40,7 @@ function moveTo (to, from, radius) {
  * @param  {object}             boundary
  * @return {object[]}
  */
-function genPoints (arr, ref, ref$1) {
+function genPoints (arr, ref, ref$1, fill) {
   var minX = ref.minX;
   var minY = ref.minY;
   var maxX = ref.maxX;
@@ -53,7 +53,7 @@ function genPoints (arr, ref, ref$1) {
   var gridX = (maxX - minX) / (arr.length - 1);
   var gridY = (maxY - minY) / (Math.max.apply(Math, arr.concat( [max] )) + 0.001 - minValue);
 
-  return arr.map(function (value, index) {
+  var ret = arr.map(function (value, index) {
     return {
       x: index * gridX + minX,
       y:
@@ -62,7 +62,11 @@ function genPoints (arr, ref, ref$1) {
         +(index === arr.length - 1) * 0.00001 -
         +(index === 0) * 0.00001
     }
-  })
+  });
+  if (fill) {
+    ret.push({x: ret.length * gridX + minX, y: maxY - (0 - minValue) * gridY});
+  }
+  return ret
 }
 
 /**
@@ -100,22 +104,23 @@ function genPath (points, radius) {
 }
 
 var Path = {
-  props: ['smooth', 'data', 'boundary', 'radius', 'id', 'max', 'min'],
+  props: ['smooth', 'data', 'fill', 'boundary', 'radius', 'id', 'max', 'min'],
 
   render: function render (h) {
     var ref = this;
     var data = ref.data;
     var smooth = ref.smooth;
+    var fill = ref.fill;
     var boundary = ref.boundary;
     var radius = ref.radius;
     var id = ref.id;
     var max = ref.max;
     var min = ref.min;
-    var points = genPoints(data, boundary, { max: max, min: min });
+    var points = genPoints(data, boundary, { max: max, min: min }, fill);
     var d = genPath(points, smooth ? radius : 0);
 
     return h('path', {
-      attrs: { d: d, fill: 'none', stroke: ("url(#" + id + ")") }
+      attrs: { d: d, fill: ("" + (fill ? fill : 'none')), stroke: ("url(#" + id + ")") }
     })
   }
 };
@@ -178,6 +183,10 @@ var Trend$1 = {
       type: Array,
       default: function () { return ['#000']; }
     },
+    fill: {
+      type: String,
+      default: undefined,
+    },
     max: {
       type: Number,
       default: -Infinity
@@ -215,12 +224,14 @@ var Trend$1 = {
 
           path.style.transition = 'none';
           path.style.strokeDasharray = length + ' ' + length;
+          path.style.fillOpacity = 0;
           path.style.strokeDashoffset = Math.abs(
             length - (this$1.lastLength || 0)
           );
           path.getBoundingClientRect();
-          path.style.transition = "stroke-dashoffset " + (this$1.autoDrawDuration) + "ms " + (this$1.autoDrawEasing);
+          path.style.transition = "all " + (this$1.autoDrawDuration) + "ms " + (this$1.autoDrawEasing);
           path.style.strokeDashoffset = 0;
+          path.style.fillOpacity = 1;
           this$1.lastLength = length;
         });
       }
